@@ -4,6 +4,8 @@
 #include "mcBlock.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/World.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 #define LOCTEXT_NAMESPACE "PuzzleBlockGrid"
 
@@ -19,6 +21,20 @@ AmcBlockGrid::AmcBlockGrid()
 	ScoreText->SetRelativeRotation(FRotator(90.f,0.f,0.f));
 	ScoreText->SetText(FText::Format(LOCTEXT("ScoreFmt", "Score: {0}"), FText::AsNumber(0)));
 	ScoreText->SetupAttachment(DummyRoot);
+
+	// 创建可激活或停止的粒子系统
+	BoomPSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("BoomParticles"));
+	BoomPSC->SetupAttachment(DummyRoot);
+	BoomPSC->bAutoActivate = false;
+	BoomPSC->SetRelativeLocation(FVector(0.f, 0.0f, 0.0f));
+	BoomPSC->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
+	if (ParticleAsset.Succeeded())
+	{
+		BoomPSC->SetTemplate(ParticleAsset.Object);
+	}
+	// 创建可激活或停止的粒子系统
 
 	// Set defaults
 	Size = 5;
@@ -38,6 +54,7 @@ AmcBlockGrid::AmcBlockGrid()
 		int32 j = FMath::RandRange(0, Size-1);
 		Grids[x][j] = int32(mc_mine);
 	}
+
 	for (size_t x = 0; x < Size; x++)
 	{
 		for (size_t y = 0; y < Size; y++)
@@ -89,7 +106,7 @@ void AmcBlockGrid::BeginPlay()
 
 	// Number of blocks
 	const int32 NumBlocks = Size * Size;
-
+	NewBlocks.Reset(NumBlocks);
 	// Loop to spawn each block
 	for(int32 BlockIndex=0; BlockIndex<NumBlocks; BlockIndex++)
 	{
@@ -101,7 +118,8 @@ void AmcBlockGrid::BeginPlay()
 
 		// Spawn a block
 		AmcBlock* NewBlock = GetWorld()->SpawnActor<AmcBlock>(BlockLocation, FRotator(0,0,0));
-
+		// NewBlock->SetActorLocation(BlockLocation);
+		NewBlocks.Push(NewBlock);
 		// Tell the block about its owner
 		if (NewBlock != nullptr)
 		{
@@ -129,6 +147,27 @@ void AmcBlockGrid::BlockClicked(int32 x, int32 y)
 	else
 	{
 		// int32 d = Size;
+	}
+}
+
+void AmcBlockGrid::Boom(int32 x, int32 y)
+{
+	const float XOffset = (x) * BlockSpacing; // Divide by dimension
+	const float YOffset = (y) * BlockSpacing; // Modulo gives remainder
+
+	TArray<FStringFormatArg> FormatArray;
+	FormatArray.Add(FStringFormatArg(XOffset));
+	FormatArray.Add(FStringFormatArg(YOffset));
+	FString name = FString::Format(TEXT("{0},{1}"), FormatArray);
+	// UE_LOG(LogTemp, Warning, TEXT("%s"), *name);
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, name);
+	}
+	if (BoomPSC && BoomPSC->Template)
+	{
+		BoomPSC->SetRelativeLocation(FVector(-XOffset, -YOffset, 100.f));
+		BoomPSC->ToggleActive();
 	}
 }
 

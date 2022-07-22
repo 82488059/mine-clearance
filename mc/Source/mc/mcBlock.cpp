@@ -10,7 +10,6 @@
 #include "Components/TextRenderComponent.h"
 #include "Engine/World.h"
 
-
 #define LOCTEXT_NAMESPACE "PuzzleBlock"
 
 AmcBlock::AmcBlock()
@@ -40,7 +39,8 @@ AmcBlock::AmcBlock()
 	BlockMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BlockMesh0"));
 	BlockMesh->SetStaticMesh(ConstructorStatics.PlaneMesh.Get());
 	BlockMesh->SetRelativeScale3D(FVector(1.f,1.f,0.25f));
-	BlockMesh->SetRelativeLocation(FVector(0.f,0.f,25.f));
+	BlockMesh->SetRelativeLocation(FVector(0.f, 0.f, 25.f));
+	BlockMesh->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 	BlockMesh->SetMaterial(0, ConstructorStatics.BlueMaterial.Get());
 	BlockMesh->SetupAttachment(DummyRoot);
 	BlockMesh->OnClicked.AddDynamic(this, &AmcBlock::BlockClicked);
@@ -59,7 +59,6 @@ AmcBlock::AmcBlock()
 	Text->SetupAttachment(DummyRoot);
 	Text->SetHiddenInGame(true);
 	// 
-
 }
 
 void AmcBlock::BlockClicked(UPrimitiveComponent* ClickedComp, FKey ButtonClicked)
@@ -94,8 +93,10 @@ void AmcBlock::HandleClicked()
 		{
 			// boom
 			BlockMesh->SetMaterial(0, RedMaterial);
+
 			if (OwningGrid != nullptr)
 			{
+				OwningGrid->Boom(GridX, GridY);
 				OwningGrid->AddScore();
 			}
 		}

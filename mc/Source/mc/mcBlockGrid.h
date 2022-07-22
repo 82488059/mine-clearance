@@ -20,6 +20,9 @@ class AmcBlockGrid : public AActor
 	UPROPERTY(Category = Grid, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UTextRenderComponent* ScoreText;
 
+	class UParticleSystemComponent* BoomPSC{ nullptr };
+
+	TArray<class AmcBlock*> NewBlocks;
 public:
 	AmcBlockGrid();
 
@@ -37,7 +40,6 @@ public:
 	TArray<TArray<int32>> Grids;
 	TArray<TArray<int32>> Flags;
 	int32 MineSize{ 0 };
-
 protected:
 	// Begin AActor interface
 	virtual void BeginPlay() override;
@@ -48,6 +50,7 @@ public:
 	/** Handle the block being clicked */
 	void AddScore();
 	void BlockClicked(int32 x, int32 y);
+	void Boom(int32 x, int32 y);
 
 	/** Returns DummyRoot subobject **/
 	FORCEINLINE class USceneComponent* GetDummyRoot() const { return DummyRoot; }
