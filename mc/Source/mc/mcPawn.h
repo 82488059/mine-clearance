@@ -26,11 +26,14 @@ protected:
 	
 	void TraceForBlock(const FVector& Start, const FVector& End, bool bDrawDebugHelpers);
 
-	void MoveXAxis(float AxisValue);
-	void MoveYAxis(float AxisValue);
-
+	void MoveRight(float AxisValue);
+	void MoveForward(float AxisValue);
+	void LookPitch(float AxisValue);
+	void LookYaw(float AxisValue);
+	
 	//  ‰»Î±‰¡ø
 	FVector CurrentVelocity;
+	FRotator CameraRotation;
 	bool bGrowing;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite)

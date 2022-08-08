@@ -14,11 +14,11 @@ class AmcBlockGrid : public AActor
 
 	/** Dummy root component */
 	UPROPERTY(Category = Grid, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* DummyRoot;
+	class USceneComponent* DummyRoot{ nullptr };
 
 	/** Text component for the score */
 	UPROPERTY(Category = Grid, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UTextRenderComponent* ScoreText;
+	class UTextRenderComponent* ScoreText{ nullptr };
 
 	class UParticleSystemComponent* BoomPSC{ nullptr };
 
@@ -27,19 +27,25 @@ public:
 	AmcBlockGrid();
 
 	/** How many blocks have been clicked */
-	int32 Score;
+	int32 Score{ 0 };
 
 	/** Number of blocks along each side of grid */
-	UPROPERTY(Category=Grid, EditAnywhere, BlueprintReadOnly)
-	int32 Size;
+	//UPROPERTY(Category=Grid, EditAnywhere, BlueprintReadOnly)
+	//int32 Size;
+	UPROPERTY(Category = Grid, EditAnywhere, BlueprintReadOnly)
+	int32 MaxX {0};
+	UPROPERTY(Category = Grid, EditAnywhere, BlueprintReadOnly)
+	int32 MaxY {0};
 
 	/** Spacing of blocks */
 	UPROPERTY(Category=Grid, EditAnywhere, BlueprintReadOnly)
-	float BlockSpacing;
+	float BlockSpacing{0};
 	enum { mc_mine=-1, mc_null=0 };
 	TArray<TArray<int32>> Grids;
-	TArray<TArray<int32>> Flags;
+	TArray<TArray<bool>> Flags;
 	int32 MineSize{ 0 };
+	float PosX{ 0.f };
+	float PosY{0.f};
 protected:
 	// Begin AActor interface
 	virtual void BeginPlay() override;

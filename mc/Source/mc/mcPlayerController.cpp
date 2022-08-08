@@ -9,3 +9,9 @@ AmcPlayerController::AmcPlayerController()
 	bEnableTouchEvents = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 }
+
+void AmcPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	SetInputMode(FInputModeGameAndUI());
+}

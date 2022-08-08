@@ -32,7 +32,8 @@ public:
 	AmcBlock();
 
 	/** Are we currently active? */
-	bool bIsActive;
+	bool bIsActive{ false };
+	bool bIsFlag{ false };
 
 	/** Pointer to white material used on the focused block */
 	UPROPERTY()
@@ -70,6 +71,7 @@ public:
 
 	void HandleClicked();
 	void HandleRightClicked();
+	void HandleOpen();
 
 	void Highlight(bool bOn);
 

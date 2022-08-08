@@ -14,6 +14,8 @@ class AmcPlayerController : public APlayerController
 
 public:
 	AmcPlayerController();
+
+	virtual void BeginPlay() override;
 };
 
 

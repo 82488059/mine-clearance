@@ -93,21 +93,27 @@ void AmcBlock::HandleClicked()
 		{
 			// boom
 			BlockMesh->SetMaterial(0, RedMaterial);
-
 			if (OwningGrid != nullptr)
 			{
 				OwningGrid->Boom(GridX, GridY);
-				OwningGrid->AddScore();
 			}
 		}
 		else if (0 != Mine)
 		{
-			BlockMesh->SetMaterial(0, OrangeMaterial);
+			BlockMesh->SetMaterial(0, BaseMaterial);
 			Text->SetHiddenInGame(false);
+			if (OwningGrid != nullptr)
+			{
+				OwningGrid->Boom(GridX, GridY);
+			}
 		}
 		else
 		{
-			BlockMesh->SetMaterial(0, OrangeMaterial);
+			BlockMesh->SetMaterial(0, BaseMaterial);
+			if (OwningGrid != nullptr)
+			{
+				OwningGrid->Boom(GridX, GridY);
+			}
 		}
 	}
 }
@@ -116,19 +122,55 @@ void AmcBlock::HandleRightClicked()
 {
 	if (bIsActive)
 	{
+		return;
+	}
+	if (bIsFlag)
+	{
+		bIsFlag = false;
+		BlockMesh->SetMaterial(0, BlueMaterial);
+	}
+	else
+	{
+		bIsFlag = true;
+		BlockMesh->SetMaterial(0, OrangeMaterial);
+	}
+
+}
+
+void AmcBlock::HandleOpen()
+{
+	// Check we are not already active
+	if (!bIsActive)
+	{
+		bIsActive = true;
+		// Change material
+		if (-1 == Mine)
+		{
+			// boom
+			BlockMesh->SetMaterial(0, RedMaterial);
+		}
+		else if (0 != Mine)
+		{
+			BlockMesh->SetMaterial(0, BaseMaterial);
+			Text->SetHiddenInGame(false);
+		}
+		else
+		{
+			BlockMesh->SetMaterial(0, BaseMaterial);
+		}
 	}
 }
 
 void AmcBlock::Highlight(bool bOn)
 {
 	// Do not highlight if the block has already been activated.
-	if (bIsActive)
+	if (bIsActive || bIsFlag)
 	{
 		return;
 	}
 	if (bOn)
 	{
-		BlockMesh->SetMaterial(0, BaseMaterial);
+		BlockMesh->SetMaterial(0, OrangeMaterial);
 	}
 	else
 	{
